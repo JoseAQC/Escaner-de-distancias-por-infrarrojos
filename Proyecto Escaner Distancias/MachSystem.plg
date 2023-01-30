@@ -1,0 +1,39 @@
+<html>
+<body>
+<pre>
+<h1>µVision Build Log</h1>
+<h2>Project:</h2>
+E:\Cosas de Ingenieros\SED\Proyectos\MachSystem\MachSystem.uvproj
+Project File Date:  11/01/2020
+
+<h2>Output:</h2>
+Build target 'LPC1768'
+compiling main.c...
+main.c(44): error:  #268: declaration may not appear after executable statement in block
+main.c(44): error:  #67: expected a "}"
+main.c(143): warning:  #223-D: function "CLKCONFIG" declared implicitly
+main.c(155): warning:  #68-D: integer conversion resulted in a change of sign
+main.c(161): warning:  #1-D: last line of file ends without a newline
+".\MachSystem.axf" - 2 Errors, 3 Warning(s).
+Target not created
+Build target 'LPC1768'
+compiling main.c...
+main.c(43): error:  #268: declaration may not appear after executable statement in block
+main.c(43): error:  #67: expected a "}"
+main.c(154): warning:  #68-D: integer conversion resulted in a change of sign
+main.c(160): warning:  #1-D: last line of file ends without a newline
+".\MachSystem.axf" - 2 Errors, 2 Warning(s).
+Target not created
+Build target 'LPC1768'
+compiling main.c...
+main.c(155): warning:  #68-D: integer conversion resulted in a change of sign
+main.c(161): warning:  #1-D: last line of file ends without a newline
+linking...
+Program Size: Code=5272 RO-data=236 RW-data=12 ZI-data=612  
+".\MachSystem.axf" - 0 Errors, 2 Warning(s).
+Build target 'LPC1768'
+compiling main.c...
+main.c(155): warning:  #68-D: integer conversion resulted in a change of sign
+linking...
+Program Size: Code=5272 RO-data=236 RW-data=12 ZI-data=612  
+".\MachSystem.axf" - 0 Errors, 1 Warning(s).
