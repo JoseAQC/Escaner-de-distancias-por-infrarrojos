@@ -1,13 +1,11 @@
 
-//EL OBJETIVO DE ESTA PR¡CTICA ES CONSTRUIR UN ESC¡NER DE DISTANCIAS BASADO EN EL MICROCONTROLADOR 
-//LPC1768 UTILIZANDO EL SENSOR DE INFRARROJOS SHARP GP2Y0A02 PARA LA DETECCI”N DE OBST¡CULOS QUE 
-//REALIZA BARRIDOS DE FORMA AUTOM¡TICA O MANUAL A PARTIR DE LOS PULSADORES KEY1 Y KEY2, AMBOS MODOS 
-//DE FUNCIONAMIENTO PUEDEN DETECTAR OBST¡CULOS QUE SE ENCUENTREN ENTRE 30 Y 150 CM. AL DETECTAR AL
-//OBJETO SE REPRODUCE UNA SE—AL DE ALARMA. ADICIONALMENTE, EL LPC SE PUEDE CONECTAR A UN ORDENADOR 
-//USANDO UN PROGRAMA DE TERMINAL O CON UN SMARTPHONE MEDIANTE UNA CONEXI”N BLUETOOTH.
-// AUTORES:
-// JosÈ Quinga Calvachi  y  Alfonso Fern·ndez ¡lvarez
-//
+//EL OBJETIVO DE ESTA PR√ÅCTICA ES CONSTRUIR UN ESC√ÅNER DE DISTANCIAS BASADO EN EL MICROCONTROLADOR 
+//LPC1768 UTILIZANDO EL SENSOR DE INFRARROJOS SHARP GP2Y0A02 PARA LA DETECCI√ìN DE OBST√ÅCULOS QUE 
+//REALIZA BARRIDOS DE FORMA AUTOM√ÅTICA O MANUAL A PARTIR DE LOS PULSADORES KEY1 Y KEY2, AMBOS MODOS 
+//DE FUNCIONAMIENTO PUEDEN DETECTAR OBST√ÅCULOS QUE SE ENCUENTREN ENTRE 30 Y 150 CM. AL DETECTAR AL
+//OBJETO SE REPRODUCE UNA SE√ëAL DE ALARMA. ADICIONALMENTE, EL LPC SE PUEDE CONECTAR A UN ORDENADOR 
+//USANDO UN PROGRAMA DE TERMINAL O CON UN SMARTPHONE MEDIANTE UNA CONEXI√ìN BLUETOOTH.
+
 
 #include <LPC17xx.H>
 #include "uart.h"
@@ -20,7 +18,7 @@
 #include <Math.h>
 #define F_cpu 100e6			// Defecto Keil (xtal=12Mhz)
 #define F_pclk F_cpu/4 	// Defecto despues del reset
-#define Ftick 750 // Frecuencia de interrupciÛn del SYSTICK (1kHz-preiodo: 1ms)
+#define Ftick 750 // Frecuencia de interrupci√≥n del SYSTICK (1kHz-preiodo: 1ms)
 
 uint8_t i=0,j,mode=0, sentido=1,delay=0;
 uint16_t key1=0,key2=0,a=0,iter=0;
@@ -32,7 +30,7 @@ char dm[200],dm1[200],ang[6], tiempo_string[10000];
 
 uint8_t secuencia1[8]={1,3,2,6,4,12,8,9};
 
-////Variables CronÛmetro Key 1
+////Variables Cron√≥metro Key 1
 uint32_t t_key1=0;
 uint16_t c_timer2=0,c_key1=0;
 
@@ -53,26 +51,26 @@ uint16_t muestras[N_muestras];
 int F_out = 500-(Umbral_dist);		  // En Hercios
 
 //UART
-char buffer[30]; // Buffer de recepciÛn de 30 caracteres
-char *ptr_rx; // puntero de recepciÛn
-char rx_completa; // Flag de recepciÛn de cadena que se activa a "1" al recibir la tecla return CR(ASCII=13)
-char *ptr_tx; // puntero de transmisiÛn
-char tx_completa; // Flag de transmisiÛn de cadena que se activa al transmitir el caracter null (fin de cadena)
+char buffer[30]; // Buffer de recepci√≥n de 30 caracteres
+char *ptr_rx; // puntero de recepci√≥n
+char rx_completa; // Flag de recepci√≥n de cadena que se activa a "1" al recibir la tecla return CR(ASCII=13)
+char *ptr_tx; // puntero de transmisi√≥n
+char tx_completa; // Flag de transmisi√≥n de cadena que se activa al transmitir el caracter null (fin de cadena)
 char fin=0;
 char distantmessage[10];	
 char distantmessage2[10];	
 //Bluetooth UART
-char b_buffer[30]; // Buffer de recepciÛn de 30 caracteres
-char *b_ptr_rx; // puntero de recepciÛn
-char b_rx_completa; // Flag de recepciÛn de cadena que se activa a "1" al recibir la tecla return CR(ASCII=13)
-char *b_ptr_tx; // puntero de transmisiÛn
-char b_tx_completa; // Flag de transmisiÛn de cadena que se activa al transmitir el caracter null (fin de cadena)
+char b_buffer[30]; // Buffer de recepci√≥n de 30 caracteres
+char *b_ptr_rx; // puntero de recepci√≥n
+char b_rx_completa; // Flag de recepci√≥n de cadena que se activa a "1" al recibir la tecla return CR(ASCII=13)
+char *b_ptr_tx; // puntero de transmisi√≥n
+char b_tx_completa; // Flag de transmisi√≥n de cadena que se activa al transmitir el caracter null (fin de cadena)
 
 
 void genera_muestras(uint16_t muestras_ciclo)
 {
 	uint16_t i;
-	//seÒal senoidal
+	//se√±al senoidal
 	for(i=0;i<muestras_ciclo;i++)
 	muestras[i]=(uint32_t)(511.5+511.5*sin((2*pi*i)/N_muestras)); // Ojo! el DAC es de 10bits
 }
@@ -142,8 +140,8 @@ void init_TIMER1(void)
     LPC_TIM1->PR = 0x00;     	 				//  Prescaler =1
     LPC_TIM1->MCR = 0x03;							//  Reset TC on Match, e interrumpe!  
     LPC_TIM1->MR0 = (F_pclk/F_out/N_muestras)-1;  // Cuentas hasta el Match 
-		//Si yo quisiera que la frecuencia variara con la distancia deberÌa variar el valor del Mach0 que es solo posible con un PWM
-    LPC_TIM1->EMR = 0x00;   					//  No act˙a sobre el HW
+		//Si yo quisiera que la frecuencia variara con la distancia deber√≠a variar el valor del Mach0 que es solo posible con un PWM
+    LPC_TIM1->EMR = 0x00;   					//  No act√∫a sobre el HW
     LPC_TIM1->TCR = 0x00;							// 
     NVIC_EnableIRQ(TIMER1_IRQn);			//  Habilita NVIC
 	  NVIC_SetPriority(TIMER1_IRQn,9);   
@@ -154,7 +152,7 @@ void init_TIMER0(void)
     LPC_TIM0->PR = 25-1;     	 				//  Prescaler =1
     LPC_TIM0->MCR |=(1<<1)|(1<<0) ;		//  Reset TC on Match, e interrumpe!  
     LPC_TIM0->MR0 = 2000000-1; 					 // 
-    LPC_TIM0->EMR = 0x00;   					//  No act˙a sobre el HW
+    LPC_TIM0->EMR = 0x00;   					//  No act√∫a sobre el HW
     LPC_TIM0->TCR = 0x00;							//  
     NVIC_EnableIRQ(TIMER0_IRQn);			//  Habilita NVIC
 	  NVIC_SetPriority(TIMER0_IRQn,10);   
@@ -260,9 +258,9 @@ void TIMER0_IRQHandler(void)
 			//// Dibujar Sonar////
 			if(mode==1){
 			drawString(20,120,"Distancia:", WHITE, BLACK, MEDIUM);
-			drawString(100, 120,dm, RED, BLACK, MEDIUM);    //primeros dÌgitos (48=0, 49=1, 50=2....)
+			drawString(100, 120,dm, RED, BLACK, MEDIUM);    //primeros d√≠gitos (48=0, 49=1, 50=2....)
 			drawString(20,132,"Angulo:", WHITE, BLACK, MEDIUM);
-			drawString(100, 132,dm1, RED, BLACK, MEDIUM);    //primeros dÌgitos (48=0, 49=1, 50=2....)
+			drawString(100, 132,dm1, RED, BLACK, MEDIUM);    //primeros d√≠gitos (48=0, 49=1, 50=2....)
 			drawRect( 5, 160, 230, 140, RED);
 			iter++;
 			if(iter==((360/resoluciongrad)-1)) {
@@ -280,7 +278,7 @@ void TIMER0_IRQHandler(void)
 	else{
 	
 			drawString(20,230,"Distancia:", WHITE, BLACK, MEDIUM);
-			drawString(100, 230,dm, RED, BLACK, MEDIUM);    //primeros dÌgitos (48=0, 49=1, 50=2....)			
+			drawString(100, 230,dm, RED, BLACK, MEDIUM);    //primeros d√≠gitos (48=0, 49=1, 50=2....)			
 			
 	   }
 			////////////////
@@ -305,13 +303,13 @@ int main(void)
   config_IRQ();
   LPC_GPIO0->FIODIR |= (1<<4) | (1<<5) | (1<<6) | (1<<7); //P0.4..0.7: 4 salidas hacia el driver del motor
   NVIC_SetPriorityGrouping(2); //32 niveles de prioridad preemptive (sin subprioridad)
-  SysTick_Config(SystemCoreClock/Ftick); //Valor de RELOAD (n∫ de cuentas del SYSTICK hasta llegar a cero)
+  SysTick_Config(SystemCoreClock/Ftick); //Valor de RELOAD (n¬∫ de cuentas del SYSTICK hasta llegar a cero)
 	ADCconfig();
  
-	ptr_rx=buffer;                    // inicializa el puntero de recepciÛn al comienzo del buffer
+	ptr_rx=buffer;                    // inicializa el puntero de recepci√≥n al comienzo del buffer
   uart0_init(9600);                                // configura la UART0 a 9600 baudios, 8 bits, 1 bit stop
 	
-	b_ptr_rx=b_buffer;                    // inicializa el puntero de recepciÛn al comienzo del buffer
+	b_ptr_rx=b_buffer;                    // inicializa el puntero de recepci√≥n al comienzo del buffer
   uart2_init(9600);      	// configura la UART2 a 9600 baudios, 8 bits, 1 bit stop
 	if(mode==1){
 			tx_cadena_UART2("Estas en modo automatico\n\r"
@@ -329,7 +327,7 @@ if(b_rx_completa==0){
 		//b_message=atoi(&b_buffer[0]);
 		do{
 			if(b_rx_completa){ // Comprabamos la llegada de una cadena por RXD
-			b_rx_completa=0; // Borrar flag para otra recepciÛn
+			b_rx_completa=0; // Borrar flag para otra recepci√≥n
 			if (strcmp (b_buffer, "10g\r") == 0) {
 			tx_cadena_UART2("Has seleccionado 10g de resolucion\n\r");
 			resoluciongrad=10;
@@ -373,7 +371,7 @@ if(rx_completa==0){	// Espera introducir una cadena de caracteres terminada con 
 	rx_completa=0; // Borrar flag
 			do{
 			if(rx_completa){ // Comprabamos la llegada de una cadena por RXD
-			rx_completa=0; // Borrar flag para otra recepciÛn
+			rx_completa=0; // Borrar flag para otra recepci√≥n
 			if (strcmp (buffer, "10g\r") == 0) {
 			tx_cadena_UART0("Has seleccionado 10g de resolucion\n\r");
 			resoluciongrad=10;
@@ -426,7 +424,7 @@ void SysTick_Handler(void) //Se ejecuta priodicamente a Ftick (Hz)
 	i&=7;
 	resolucion=(4096)/(360/resoluciongrad); //Convierte de grados a pasos
 	
-/*=====================================|MODO AUTOM¡TICO|========================================*/
+/*=====================================|MODO AUTOM√ÅTICO|========================================*/
   if(mode==1){		
 		
     contador2++;
